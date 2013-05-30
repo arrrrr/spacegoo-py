@@ -4,11 +4,18 @@ import sys
 import math
 import re
 
+class arith_list(list):
+    def __add__(self, other):
+        return arith_list([x + y for x, y in zip(self, other)])
+
+    def __rmul__(self, other):
+        return arith_list([x * other for x in self])
+
 class Planet:
     def __init__(self, json):
         self.player_id = json['owner_id']
-        self.ships = json['ships']
-        self.production = json['production']
+        self.ships = arith_list(json['ships'])
+        self.production = arith_list(json['production'])
         self.x = json['x']
         self.y = json['y']
         self.id = json['id']
@@ -18,14 +25,14 @@ class Planet:
 
     def flyto(self, other, ships):
         return ("send %s %s %d %d %d" % (self.id, other.id, ships[0], ships[1], ships[2]))
-        
+
 class Fleet:
     def __init__(self, json, planets):
         self.id = json['id']
         self.player_id = json['owner_id']
         target_string = json['target']
         origin_string = json['origin']
-        
+
         self.target = [planet for planet in planets if planet.id == target_string][0]
         self.origin = [planet for planet in planets if planet.id == origin_string][0]
         self.ships = json['ships']
