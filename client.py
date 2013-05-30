@@ -18,10 +18,26 @@ class Planet:
 
     def flyto(self, other, ships):
         return ("send %s %s %d %d %d" % (self.id, other.id, ships[0], ships[1], ships[2]))
+        
+class Fleet:
+    def __init__(self, json, planets):
+        self.id = json['id']
+        self.player_id = json['owner_id']
+        target_string = json['target']
+        origin_string = json['origin']
+        
+        self.target = [planet for planet in planets if planet.id == target_string][0]
+        self.origin = [planet for planet in planets if planet.id == origin_string][0]
+        self.ships = json['ships']
+        self.eta = json['eta']
+        
+    def can_intercept?(origin_planet, current_round)
+        return (origin_planet.ships[0] > 0 or origin_planet.ships[1] > 0 or origin_planet.ships[2] > 0 ) and origin_planet.dist(self.target) < (self.eta - current_round)
 
 class State:
     def __init__(self, json):
         self.planets = [Planet(p) for p in json['planets']]
+        self.fleets = [Fleet(p, planets) for p in json['fleets']]
         self.player_id = json['player_id']
 
     def my(self, thing):
