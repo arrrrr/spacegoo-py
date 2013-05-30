@@ -19,9 +19,13 @@ class Planet:
         self.x = json['x']
         self.y = json['y']
         self.id = json['id']
+        self.attacking_fleets = []
 
     def dist(self, other):
-        return int(math.sqrt((self.x-other.x)**2 + (self.y-other.y)**2))
+        return int(math.ceil(math.sqrt((self.x-other.x)**2 + (self.y-other.y)**2)))
+
+    def add_attacking_fleet(self, fleet):
+        self.attacking_fleets += [fleet]
 
     def flyto(self, other, ships):
         return ("send %s %s %d %d %d" % (self.id, other.id, ships[0], ships[1], ships[2]))
@@ -34,6 +38,7 @@ class Fleet:
         origin_string = json['origin']
 
         self.target = [planet for planet in planets if planet.id == target_string][0]
+        self.target.add_attacking_fleet(self)
         self.origin = [planet for planet in planets if planet.id == origin_string][0]
         self.ships = json['ships']
         self.eta = json['eta']
