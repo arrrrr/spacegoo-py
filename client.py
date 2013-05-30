@@ -47,12 +47,13 @@ class Fleet:
     def will_conquer_target(self):
         return sum(self.battle(self.ships, self.target.ships)[1]) == 0
         
-    def battle(self, s1,s2):
+    @staticmethod
+    def battle(s1,s2):
         ships1 = s1[::]
         ships2 = s2[::]
         while sum(ships1) > 0 and sum(ships2) >0:
-            new1 = self.battle_round(ships2,ships1)
-            ships2 = self.battle_round(ships1,ships2)
+            new1 = Fleet.battle_round(ships2,ships1)
+            ships2 = Fleet.battle_round(ships1,ships2)
             ships1 = new1
             #print ships1,ships2
             
@@ -61,7 +62,8 @@ class Fleet:
         #print ships1,ships2
         return ships1, ships2
     
-    def battle_round(self, attacker,defender):
+    @staticmethod
+    def battle_round(attacker,defender):
         #nur eine asymmetrische runde. das hier muss mal also zweimal aufrufen.
         numships = len(attacker)
         defender = defender[::]
