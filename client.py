@@ -123,8 +123,8 @@ def play(user, password, ai):
             write(ai(s))
             print("\r[{}/{}] {} - {} - {} ".format(state['round'], state['max_rounds'],
               sum([sum(planet.ships) for planet in s.my_planets]),
-              sum([sum(planet.ships) for planet in s.my_planets]),
-              sum([sum(planet.ships) for planet in s.my_planets])),
+              sum([sum(planet.ships) for planet in s.neutral_planets]),
+              sum([sum(planet.ships) for planet in s.enemy_planets])),
               end='')
         elif re.match('command received|welcome|calculating|waiting for', data):
             pass
