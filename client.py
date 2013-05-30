@@ -76,8 +76,13 @@ def play(user, password, ai):
 
             s = State(state)
             write(ai(s))
-            print("\r{} - {} - {}".format(len(s.my_planets), len(s.neutral_planets), len(s.enemy_planets)), end='')
+            print("\r[{}/{}] {} - {} - {}".format(state['round'], state['max_rounds'], len(s.my_planets), len(s.neutral_planets), len(s.enemy_planets)), end='')
         elif re.match('command received|welcome|calculating|waiting for', data):
             pass
+        elif re.match('game ended', data):
+            print()
+            msg = data.replace('player 1', 'YOU' if s.player_id == 1 else 'enemy')
+            msg = msg.replace('player 2', 'YOU' if s.player_id == 2 else 'enemy')
+            print(msg)
         else:
             print(data)
