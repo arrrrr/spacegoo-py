@@ -31,13 +31,13 @@ class Fleet:
         self.ships = json['ships']
         self.eta = json['eta']
         
-    def can_intercept?(origin_planet, current_round)
+    def can_intercept(origin_planet, current_round):
         return (origin_planet.ships[0] > 0 or origin_planet.ships[1] > 0 or origin_planet.ships[2] > 0 ) and origin_planet.dist(self.target) < (self.eta - current_round)
 
 class State:
     def __init__(self, json):
         self.planets = [Planet(p) for p in json['planets']]
-        self.fleets = [Fleet(p, planets) for p in json['fleets']]
+        self.fleets = [Fleet(p, self.planets) for p in json['fleets']]
         self.player_id = json['player_id']
 
     def my(self, thing):
