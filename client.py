@@ -31,14 +31,52 @@ class Fleet:
         self.ships = json['ships']
         self.eta = json['eta']
         
-    def can_intercept(origin_planet, current_round):
-        return (origin_planet.ships[0] > 0 or origin_planet.ships[1] > 0 or origin_planet.ships[2] > 0 ) and origin_planet.dist(self.target) < (self.eta - current_round)
+    def can_intercept(self, origin_planet, current_round):
+        combined_ships = origin_planet.ships
+        for i in range(0, len(self.target.ships)):
+            combined_ships[i] += self.target.ships[i]
+        return (origin_planet.ships[0] > 0 or origin_planet.ships[1] > 0 or origin_planet.ships[2] > 0 ) and origin_planet.dist(self.target) < (self.eta - current_round) and self.battle(self.ships, combined_ships)
+        
+    def will_conquer_target(self):
+        return sum(self.battle(self.ships, self.target.ships)[1]) == 0
+        
+    def battle(self, s1,s2):
+        ships1 = s1[::]
+        ships2 = s2[::]
+        while sum(ships1) > 0 and sum(ships2) >0:
+            new1 = self.battle_round(ships2,ships1)
+            ships2 = self.battle_round(ships1,ships2)
+            ships1 = new1
+            #print ships1,ships2
+            
+        ships1 = map(int,ships1)
+        ships2 = map(int,ships2)
+        #print ships1,ships2
+        return ships1, ships2
+    
+    def battle_round(self, attacker,defender):
+        #nur eine asymmetrische runde. das hier muss mal also zweimal aufrufen.
+        numships = len(attacker)
+        defender = defender[::]
+        for def_type in range(0,numships):
+            for att_type in range(0,numships):
+                multiplier = 0.1
+                absolute = 1
+                if (def_type-att_type)%numships == 1:
+                    multiplier = 0.25
+                    absolute = 2
+                if (def_type-att_type)%numships == numships-1:
+                    multiplier = 0.01
+                defender[def_type] -= (attacker[att_type]*multiplier) + (attacker[att_type] > 0) * absolute
+            defender[def_type] = max(0,defender[def_type])
+        return defender
 
 class State:
     def __init__(self, json):
         self.planets = [Planet(p) for p in json['planets']]
         self.fleets = [Fleet(p, self.planets) for p in json['fleets']]
         self.player_id = json['player_id']
+        self.round = json['round']
 
     def my(self, thing):
         return thing.player_id == self.player_id
