@@ -26,7 +26,8 @@ class Planet:
 
     def add_attacking_fleet(self, fleet):
         self.attacking_fleets += [fleet]
-
+    
+    # Sends a fleet consisting of "ships" units from this planet to the planet "other".
     def flyto(self, other, ships):
         return ("send %s %s %d %d %d" % (self.id, other.id, ships[0], ships[1], ships[2]))
 
