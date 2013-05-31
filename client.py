@@ -129,9 +129,11 @@ def play(user, password, ai):
             s = State(state)
             write(ai(s))
             print("\r[{}/{}] {} - {} - {} ".format(state['round'], state['max_rounds'],
-              sum([sum(planet.ships) for planet in s.my_planets]),
+              sum([sum(planet.ships) for planet in s.my_planets]) + sum([sum(fleet.ships) for fleet in s.fleets if
+                fleet.player_id == s.player_id]),
               sum([sum(planet.ships) for planet in s.neutral_planets]),
-              sum([sum(planet.ships) for planet in s.enemy_planets])),
+              sum([sum(planet.ships) for planet in s.enemy_planets]) + sum([sum(fleet.ships) for fleet in s.fleets if
+                not fleet.player_id == s.player_id])),
               end='')
         elif re.match('command received|welcome|calculating|waiting for', data):
             pass
